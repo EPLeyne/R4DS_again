@@ -143,4 +143,51 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy,colour = drv)) +
 
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy,colour = drv)) +
   geom_point()
-  
+
+#Statistical Transformations
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))
+
+?geom_bar
+
+ggplot(data = diamonds) +
+  stat_count(mapping = aes(x = cut))
+
+demo <- tribble(
+  ~a, ~b,
+  "bar1", 20,
+  "bar2", 30,
+  "bar3", 40)
+
+ggplot(data = demo) +
+  geom_bar(
+    mapping = aes(x = a, y = b), stat = "identity"
+  )
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
+ggplot(data = diamonds) +
+  stat_summary(mapping = aes(x = cut, y = depth),
+           fun.ymin = min,
+           fun.ymax = max,
+           fun.y = median)
+
+#1
+?stat_summary
+?geom_pointrange
+
+#Because the default of geom_pointrange is identity we have to pre-calculate the stats
+diamonds %>% group_by(cut) %>% summarize(median_y = median(depth),
+                                         min_y = min(depth),
+                                         max_y = max(depth)) %>%
+  ggplot() +
+  geom_pointrange(mapping = aes(x = cut, y = median_y, ymin = min_y, ymax = max_y)) +
+  labs(y = 'depth')
+
+#2
+?geom_col
+
+#4
+?stat_smooth
